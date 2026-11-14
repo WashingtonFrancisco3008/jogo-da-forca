@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jogo da Forca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --papel: #e9eff3;
+    --grade: #cfdbe3;
+    --tinta: #1c2a39;
+    --lapis: #c23b2a;
+    --acerto: #2f6f4f;
+    --suave: #5b6b7a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Patrick Hand", "Comic Sans MS", "Segoe Print", sans-serif;
+    font-size: 1.25rem;
+    color: var(--tinta);
+    background-color: var(--papel);
+    background-image:
+      linear-gradient(var(--grade) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grade) 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  main { width: 100%; max-width: 640px; }
+  h1 { font-size: 2.4rem; margin: 0 0 4px; font-weight: 400; }
+  .sub { color: var(--suave); margin: 0 0 20px; }
+
+  .temas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .temas button {
+    font: inherit; padding: 6px 14px; cursor: pointer;
+    background: transparent; color: var(--tinta);
+    border: 2px solid var(--tinta); border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  }
+  .temas button[aria-pressed="true"] { background: var(--tinta); color: var(--papel); }
+
+  .palco { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  svg { width: 220px; height: auto; flex: none; }
+  svg .estrutura { stroke: var(--tinta); stroke-width: 5; stroke-linecap: round; fill: none; }
+  svg .parte { stroke: var(--lapis); stroke-width: 5; stroke-linecap: round; fill: none; display: none; }
+  svg .parte.visivel { display: inline; }
+
+  .lateral { flex: 1; min-width: 200px; }
+  .status { margin: 0 0 6px; color: var(--suave); }
+  .dica { margin: 0 0 10px; }
+
+  .palavra {
+    display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 24px; justify-content: center;
+  }
+  .letra {
+    width: 2.1rem; height: 2.6rem; display: grid; place-items: center;
+    font-size: 1.9rem; text-transform: uppercase;
+    border-bottom: 3px solid var(--tinta);
+  }
+  .letra.espaco { border-bottom-color: transparent; width: 1rem; }
+  .letra.revelada { color: var(--lapis); }
+
+  .teclado { display: grid; grid-template-columns: repeat(auto-fill, minmax(2.6rem, 1fr)); gap: 6px; }
+  .teclado button {
+    font: inherit; font-size: 1.3rem; padding: 6px 0; cursor: pointer; text-transform: uppercase;
+    background: #fff; color: var(--tinta); border: 2px solid var(--tinta); border-radius: 8px;
+  }
+  .teclado button:disabled { cursor: default; opacity: .9; }
+  .teclado button.certa { background: var(--acerto); border-color: var(--acerto); color: #fff; }
+  .teclado button.errada { background: transparent; border-color: var(--suave); color: var(--suave); text-decoration: line-through; }
+
+  .resultado { min-height: 3rem; margin: 20px 0 8px; font-size: 1.5rem; text-align: center; }
+  .resultado.vitoria { color: var(--acerto); }
+  .resultado.derrota { color: var(--lapis); }
+  #novo {
+    display: block; margin: 0 auto; font: inherit; padding: 8px 22px; cursor: pointer;
+    background: var(--tinta); color: var(--papel); border: 2px solid var(--tinta); border-radius: 8px;
+  }
+  button:focus-visible { outline: 3px solid var(--lapis); outline-offset: 2px; }
+  .erro { color: var(--lapis); text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Jogo da Forca</h1>
+  <p class="sub">Escolha um tema e descubra a palavra antes de completar o desenho.</p>
+
+  <div class="temas" id="temas" role="group" aria-label="Tema"></div>
+
+  <div class="palco">
+    <svg viewBox="0 0 200 240" role="img" aria-label="Desenho da forca">
+      <g class="estrutura">
+        <line x1="20" y1="225" x2="130" y2="225"/>
+        <line x1="50" y1="225" x2="50" y2="20"/>
+        <line x1="50" y1="20" x2="130" y2="20"/>
+        <line x1="130" y1="20" x2="130" y2="50"/>
+      </g>
+      <circle class="parte" cx="130" cy="72" r="22"/>
+      <line class="parte" x1="130" y1="94" x2="130" y2="155"/>
+      <line class="parte" x1="130" y1="108" x2="105" y2="138"/>
+      <line class="parte" x1="130" y1="108" x2="155" y2="138"/>
+      <line class="parte" x1="130" y1="155" x2="108" y2="195"/>
+      <line class="parte" x1="130" y1="155" x2="152" y2="195"/>
+    </svg>
+    <div class="lateral">
+      <p class="dica" id="dica"></p>
+      <p class="status" id="status"></p>
+    </div>
+  </div>
+
+  <div class="palavra" id="palavra" aria-live="polite"></div>
+  <div class="teclado" id="teclado"></div>
+  <p class="resultado" id="resultado" aria-live="assertive"></p>
+  <button id="novo" type="button">Nova palavra</button>
+</main>
+
+<script>
+const MAX_ERROS = 6;
+const ALFABETO = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+const el = {
+  temas: document.getElementById('temas'),
+  dica: document.getElementById('dica'),
+  status: document.getElementById('status'),
+  palavra: document.getElementById('palavra'),
+  teclado: document.getElementById('teclado'),
+  resultado: document.getElementById('resultado'),
+  novo: document.getElementById('novo'),
+  partes: document.querySelectorAll('svg .parte'),
+};
+
+// Nome exibido de cada tema (o banco guarda sem acento)
+const ROTULOS = { aleatorio: 'Aleatório', profissao: 'Profissão' };
+const rotulo = (t) => ROTULOS[t] || t.charAt(0).toUpperCase() + t.slice(1);
+
+let temaAtual = 'aleatorio';
+let jogo = null;
+
+// Remove acentos para comparar letras (médico -> medico)
+const normalizar = (c) => c.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+async function carregarTemas() {
+  try {
+    const temas = await (await fetch('/api/temas')).json();
+    const opcoes = [['aleatorio', rotulo('aleatorio')], ...temas.map((t) => [t, rotulo(t)])];
+    el.temas.innerHTML = '';
+    opcoes.forEach(([valor, rotulo]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = rotulo;
+      b.setAttribute('aria-pressed', valor === temaAtual);
+      b.addEventListener('click', () => {
+        temaAtual = valor;
+        el.temas.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b));
+        novoJogo();
+      });
+      el.temas.appendChild(b);
+    });
+  } catch {
+    el.resultado.className = 'resultado erro';
+    el.resultado.textContent = 'Não foi possível carregar os temas. Verifique se o servidor está rodando.';
+  }
+}
+
+async function novoJogo() {
+  try {
+    const resp = await fetch('/api/palavra?tema=' + encodeURIComponent(temaAtual));
+    if (!resp.ok) throw new Error();
+    const { tema, palavra } = await resp.json();
+    jogo = { tema, palavra, tentadas: new Set(), erros: 0, fim: false };
+    desenhar();
+  } catch {
+    el.resultado.className = 'resultado erro';
+    el.resultado.textContent = 'Não foi possível sortear uma palavra. Tente novamente.';
+  }
+}
+
+function tentar(letra) {
+  if (!jogo || jogo.fim || jogo.tentadas.has(letra)) return;
+  jogo.tentadas.add(letra);
+  const acertou = [...jogo.palavra].some((c) => normalizar(c) === letra);
+  if (!acertou) jogo.erros++;
+
+  const completa = [...jogo.palavra].every((c) => !/\p{L}/u.test(c) || jogo.tentadas.has(normalizar(c)));
+  if (completa) jogo.fim = 'vitoria';
+  else if (jogo.erros >= MAX_ERROS) jogo.fim = 'derrota';
+  desenhar();
+}
+
+function desenhar() {
+  // Tema e tentativas
+  el.dica.textContent = 'Tema: ' + rotulo(jogo.tema);
+  el.status.textContent = `Erros: ${jogo.erros} de ${MAX_ERROS}`;
+
+  // Boneco
+  el.partes.forEach((p, i) => p.classList.toggle('visivel', i < jogo.erros));
+
+  // Palavra secreta
+  el.palavra.innerHTML = '';
+  [...jogo.palavra].forEach((c) => {
+    const s = document.createElement('span');
+    s.className = 'letra';
+    if (!/\p{L}/u.test(c)) {
+      // hífen ou espaço aparecem desde o início
+      s.textContent = c === ' ' ? '' : c;
+      if (c === ' ') s.classList.add('espaco');
+    } else if (jogo.tentadas.has(normalizar(c)) || jogo.fim === 'derrota') {
+      s.textContent = c;
+      if (!jogo.tentadas.has(normalizar(c))) s.classList.add('revelada');
+    }
+    el.palavra.appendChild(s);
+  });
+
+  // Teclado
+  el.teclado.innerHTML = '';
+  ALFABETO.forEach((l) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = l;
+    if (jogo.tentadas.has(l)) {
+      const certa = [...jogo.palavra].some((c) => normalizar(c) === l);
+      b.classList.add(certa ? 'certa' : 'errada');
+    }
+    b.disabled = jogo.tentadas.has(l) || !!jogo.fim;
+    b.addEventListener('click', () => tentar(l));
+    el.teclado.appendChild(b);
+  });
+
+  // Resultado
+  el.resultado.className = 'resultado' + (jogo.fim ? ' ' + jogo.fim : '');
+  el.resultado.textContent =
+    jogo.fim === 'vitoria' ? 'Você acertou!' :
+    jogo.fim === 'derrota' ? `Fim de jogo. A palavra era "${jogo.palavra}".` : '';
+}
+
+// Teclado físico
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const l = e.key.toLowerCase();
+  if (ALFABETO.includes(l)) tentar(l);
+});
+
+el.novo.addEventListener('click', novoJogo);
+
+carregarTemas().then(novoJogo);
+</script>
+</body>
+</html>
