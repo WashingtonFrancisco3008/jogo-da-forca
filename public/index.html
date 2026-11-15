@@ -8,98 +8,91 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --papel: #e9eff3;
-    --grade: #cfdbe3;
-    --tinta: #1c2a39;
-    --lapis: #c23b2a;
-    --acerto: #2f6f4f;
-    --suave: #5b6b7a;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: "Patrick Hand", "Comic Sans MS", "Segoe Print", sans-serif;
-    font-size: 1.25rem;
-    color: var(--tinta);
-    background-color: var(--papel);
-    background-image:
-      linear-gradient(var(--grade) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grade) 1px, transparent 1px);
-    background-size: 28px 28px;
-    display: flex;
-    justify-content: center;
-    padding: 24px 16px;
-  }
-  main { width: 100%; max-width: 640px; }
-  h1 { font-size: 2.4rem; margin: 0 0 4px; font-weight: 400; }
-  .sub { color: var(--suave); margin: 0 0 20px; }
-
-  .temas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-  .temas button {
-    font: inherit; padding: 6px 14px; cursor: pointer;
-    background: transparent; color: var(--tinta);
-    border: 2px solid var(--tinta); border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-  }
-  .temas button[aria-pressed="true"] { background: var(--tinta); color: var(--papel); }
-
-  .palco { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; }
-  svg { width: 220px; height: auto; flex: none; }
-  svg .estrutura { stroke: var(--tinta); stroke-width: 5; stroke-linecap: round; fill: none; }
-  svg .parte { stroke: var(--lapis); stroke-width: 5; stroke-linecap: round; fill: none; display: none; }
-  svg .parte.visivel { display: inline; }
-
-  .lateral { flex: 1; min-width: 200px; }
-  .status { margin: 0 0 6px; color: var(--suave); }
-  .dica { margin: 0 0 10px; }
-
-  .palavra {
-    display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 24px; justify-content: center;
-  }
-  .letra {
-    width: 2.1rem; height: 2.6rem; display: grid; place-items: center;
-    font-size: 1.9rem; text-transform: uppercase;
-    border-bottom: 3px solid var(--tinta);
-  }
-  .letra.espaco { border-bottom-color: transparent; width: 1rem; }
-  .letra.revelada { color: var(--lapis); }
-
-  .teclado { display: grid; grid-template-columns: repeat(auto-fill, minmax(2.6rem, 1fr)); gap: 6px; }
-  .teclado button {
-    font: inherit; font-size: 1.3rem; padding: 6px 0; cursor: pointer; text-transform: uppercase;
-    background: #fff; color: var(--tinta); border: 2px solid var(--tinta); border-radius: 8px;
-  }
-  .teclado button:disabled { cursor: default; opacity: .9; }
-  .teclado button.certa { background: var(--acerto); border-color: var(--acerto); color: #fff; }
-  .teclado button.errada { background: transparent; border-color: var(--suave); color: var(--suave); text-decoration: line-through; }
-
-  .resultado { min-height: 3rem; margin: 20px 0 8px; font-size: 1.5rem; text-align: center; }
-  .resultado.vitoria { color: var(--acerto); }
-  .resultado.derrota { color: var(--lapis); }
-  #novo {
-    display: block; margin: 0 auto; font: inherit; padding: 8px 22px; cursor: pointer;
-    background: var(--tinta); color: var(--papel); border: 2px solid var(--tinta); border-radius: 8px;
-  }
-  button:focus-visible { outline: 3px solid var(--lapis); outline-offset: 2px; }
-  .erro { color: var(--lapis); text-align: center; }
+:root{--lousa:#1b2926;--lousa2:#243732;--giz:#f1ede2;--suave:#9fb0a8;--ouro:#f2b84b;--erro:#ff7a66;--ok:#7fd1a0;--linha:#3d544d}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;justify-content:center;padding:20px 14px;color:var(--giz);
+ font:1.2rem/1.3 "Patrick Hand","Comic Sans MS","Segoe Print",sans-serif;
+ background:radial-gradient(ellipse at 50% 0,var(--lousa2),var(--lousa) 70%) fixed}
+main{width:100%;max-width:680px}
+h1{font-weight:400;font-size:2.6rem;margin:0;letter-spacing:.02em}
+h2{font-weight:400;font-size:1.6rem;margin:0 0 4px;color:var(--ouro)}
+p{margin:0 0 12px;color:var(--suave)}
+button{font:inherit;color:var(--giz);cursor:pointer;background:transparent;border:2px solid var(--giz);border-radius:10px;padding:6px 16px}
+button:hover:not(:disabled){background:rgba(241,237,226,.1)}
+button:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
+.card{border:2px dashed var(--linha);border-radius:14px;padding:18px;margin-bottom:16px;background:rgba(0,0,0,.12)}
+.grupo{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.grupo button[aria-pressed=true]{background:var(--giz);color:var(--lousa)}
+.principal{background:var(--ouro);border-color:var(--ouro);color:var(--lousa);padding:8px 24px;font-size:1.25rem}
+.principal:hover:not(:disabled){background:#ffd07a}
+.hidden{display:none!important}
+p b{color:var(--giz);font-weight:400}
+.topo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.topo .sp{flex:1}
+.chip{border:1.5px solid var(--linha);border-radius:99px;padding:2px 12px;font-size:1rem;color:var(--suave)}
+.chip b{color:var(--giz);font-weight:400}
+#tempo{height:10px;border-radius:9px;background:var(--linha);overflow:hidden;margin-bottom:10px}
+#barra{height:100%;width:100%;background:var(--ok);transition:width 1s linear,background .3s}
+#tempo.urgente #barra{background:var(--erro)}
+.palco{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+svg{width:200px;flex:none}
+.est{stroke:var(--giz);stroke-width:5;stroke-linecap:round;fill:none}
+.parte{stroke:var(--erro);stroke-width:5;stroke-linecap:round;fill:none;display:none}
+.parte.v{display:inline}
+.info{flex:1;min-width:190px;text-align:center}
+#tt{font-size:1.9rem;margin:0}
+#relogio{font-size:2.4rem;color:var(--ouro);margin:0}
+#relogio.urgente{color:var(--erro)}
+#palavra{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 20px}
+.l{width:2.1rem;height:2.6rem;display:grid;place-items:center;font-size:1.9rem;text-transform:uppercase;border-bottom:3px solid var(--giz)}
+.l.e{border-color:transparent;width:.8rem}
+.l.rev{color:var(--erro)}
+#teclado{display:grid;grid-template-columns:repeat(auto-fill,minmax(2.6rem,1fr));gap:6px}
+#teclado button{text-transform:uppercase;padding:5px 0;font-size:1.3rem}
+#teclado .c{background:var(--ok);border-color:var(--ok);color:var(--lousa)}
+#teclado .x{border-color:var(--linha);color:var(--linha);text-decoration:line-through}
+#res{min-height:2.4rem;text-align:center;font-size:1.5rem;margin:16px 0 8px}
+#res.ok{color:var(--ok)}#res.ruim{color:var(--erro)}
+#acao{display:block;margin:0 auto}
 </style>
 </head>
 <body>
 <main>
+<section id="menu">
   <h1>Jogo da Forca</h1>
-  <p class="sub">Escolha um tema e descubra a palavra antes de completar o desenho.</p>
+  <div class="card">
+    <h2>Fases · 10 palavras</h2>
+    <p>Acerte 10 palavras aleatórias. Se o boneco ficar completo, é game over.</p>
+    <div class="grupo">
+      <button class="principal" data-f="facil">Fácil</button>
+      <button class="principal" data-f="medio">Médio</button>
+      <button class="principal" data-f="dificil">Difícil</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Modo infinito</h2>
+    <p>Sem limite de palavras: jogue o quanto quiser e escolha o tema.</p>
+    <div class="grupo" id="dif" role="group" aria-label="Dificuldade">
+      <button data-d="facil" aria-pressed="true">Fácil</button>
+      <button data-d="medio" aria-pressed="false">Médio</button>
+      <button data-d="dificil" aria-pressed="false">Difícil</button>
+    </div>
+    <div class="grupo" id="temas" role="group" aria-label="Tema"></div>
+    <button class="principal" id="jogarInf">Jogar</button>
+  </div>
+</section>
 
-  <div class="temas" id="temas" role="group" aria-label="Tema"></div>
-
+<section id="jogo" class="hidden">
+  <div class="topo">
+    <button id="voltar">← Menu</button>
+    <span class="chip" id="cModo"></span><span class="chip" id="cTema"></span>
+    <span class="sp"></span>
+    <span class="chip" id="cPlacar"></span>
+  </div>
+  <div id="tempo" class="hidden"><div id="barra"></div></div>
   <div class="palco">
     <svg viewBox="0 0 200 240" role="img" aria-label="Desenho da forca">
-      <g class="estrutura">
-        <line x1="20" y1="225" x2="130" y2="225"/>
-        <line x1="50" y1="225" x2="50" y2="20"/>
-        <line x1="50" y1="20" x2="130" y2="20"/>
-        <line x1="130" y1="20" x2="130" y2="50"/>
-      </g>
+      <g class="est"><line x1="20" y1="225" x2="130" y2="225"/><line x1="50" y1="225" x2="50" y2="20"/><line x1="50" y1="20" x2="130" y2="20"/><line x1="130" y1="20" x2="130" y2="50"/></g>
       <circle class="parte" cx="130" cy="72" r="22"/>
       <line class="parte" x1="130" y1="94" x2="130" y2="155"/>
       <line class="parte" x1="130" y1="108" x2="105" y2="138"/>
@@ -107,147 +100,142 @@
       <line class="parte" x1="130" y1="155" x2="108" y2="195"/>
       <line class="parte" x1="130" y1="155" x2="152" y2="195"/>
     </svg>
-    <div class="lateral">
-      <p class="dica" id="dica"></p>
-      <p class="status" id="status"></p>
+    <div class="info">
+      <p id="tt"></p><p id="relogio" class="hidden"></p><p id="erros"></p>
     </div>
   </div>
-
-  <div class="palavra" id="palavra" aria-live="polite"></div>
-  <div class="teclado" id="teclado"></div>
-  <p class="resultado" id="resultado" aria-live="assertive"></p>
-  <button id="novo" type="button">Nova palavra</button>
+  <div id="palavra" aria-live="polite"></div>
+  <div id="teclado"></div>
+  <p id="res" aria-live="assertive"></p>
+  <button class="principal hidden" id="acao"></button>
+</section>
 </main>
 
 <script>
-const MAX_ERROS = 6;
-const ALFABETO = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const ALFA='abcdefghijklmnopqrstuvwxyz'.split('');
+const MAX_ERROS=6, TEMPO=45, TOTAL=10; // TEMPO = segundos por palavra no modo fase
+const ROT={aleatorio:'Aleatório',profissao:'Profissão'};
+const rot=t=>ROT[t]||t.charAt(0).toUpperCase()+t.slice(1);
+const norm=c=>c.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const eLetra=c=>/\p{L}/u.test(c);
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+// Lista reserva: usada só se a API não responder (ex.: abrir o arquivo direto no navegador)
+const RESERVA={animal:['ELEFANTE','GIRAFA','TUCANO','GOLFINHO','CAPIVARA'],fruta:['BANANA','MORANGO','GOIABA','MARACUJA','ABACAXI'],
+ profissao:['MEDICO','BOMBEIRO','PROGRAMADOR','FOTOGRAFO','ARQUITETO'],objeto:['CADEIRA','RELOGIO','TESOURA','MOCHILA','VENTILADOR']};
 
-const el = {
-  temas: document.getElementById('temas'),
-  dica: document.getElementById('dica'),
-  status: document.getElementById('status'),
-  palavra: document.getElementById('palavra'),
-  teclado: document.getElementById('teclado'),
-  resultado: document.getElementById('resultado'),
-  novo: document.getElementById('novo'),
-  partes: document.querySelectorAll('svg .parte'),
-};
+let cfg={modo:'infinito',dif:'facil',tema:'aleatorio'}, jogo=null, usadas=new Set(), placar={ok:0,x:0}, timer=null;
 
-// Nome exibido de cada tema (o banco guarda sem acento)
-const ROTULOS = { aleatorio: 'Aleatório', profissao: 'Profissão' };
-const rotulo = (t) => ROTULOS[t] || t.charAt(0).toUpperCase() + t.slice(1);
-
-let temaAtual = 'aleatorio';
-let jogo = null;
-
-// Remove acentos para comparar letras (médico -> medico)
-const normalizar = (c) => c.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-
-async function carregarTemas() {
-  try {
-    const temas = await (await fetch('/api/temas')).json();
-    const opcoes = [['aleatorio', rotulo('aleatorio')], ...temas.map((t) => [t, rotulo(t)])];
-    el.temas.innerHTML = '';
-    opcoes.forEach(([valor, rotulo]) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = rotulo;
-      b.setAttribute('aria-pressed', valor === temaAtual);
-      b.addEventListener('click', () => {
-        temaAtual = valor;
-        el.temas.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b));
-        novoJogo();
-      });
-      el.temas.appendChild(b);
-    });
-  } catch {
-    el.resultado.className = 'resultado erro';
-    el.resultado.textContent = 'Não foi possível carregar os temas. Verifique se o servidor está rodando.';
-  }
+async function carregarTemas(){
+  let lista;
+  try{const r=await fetch('/api/temas');if(!r.ok)throw 0;lista=await r.json();}catch{lista=Object.keys(RESERVA);}
+  $('temas').innerHTML='';
+  ['aleatorio',...lista].forEach(t=>{
+    const b=document.createElement('button');
+    b.textContent=rot(t);b.setAttribute('aria-pressed',t===cfg.tema);
+    b.onclick=()=>{cfg.tema=t;[...$('temas').children].forEach(x=>x.setAttribute('aria-pressed',x===b));};
+    $('temas').appendChild(b);
+  });
 }
 
-async function novoJogo() {
-  try {
-    const resp = await fetch('/api/palavra?tema=' + encodeURIComponent(temaAtual));
-    if (!resp.ok) throw new Error();
-    const { tema, palavra } = await resp.json();
-    jogo = { tema, palavra, tentadas: new Set(), erros: 0, fim: false };
+async function sortear(tema){
+  let p;
+  for(let i=0;i<25;i++){
+    try{const r=await fetch('/api/palavra?tema='+encodeURIComponent(tema));if(!r.ok)throw 0;p=await r.json();}
+    catch{const t=tema==='aleatorio'?pick(Object.keys(RESERVA)):tema;p={tema:t,palavra:pick(RESERVA[t]||RESERVA.animal)};}
+    if(cfg.modo!=='fase'||!usadas.has(p.palavra))break; // na fase, não repete palavra
+  }
+  return p;
+}
+
+function tela(n){$('menu').classList.toggle('hidden',n!=='menu');$('jogo').classList.toggle('hidden',n!=='jogo');}
+function parar(){clearInterval(timer);timer=null;}
+
+async function iniciar(){
+  usadas.clear();placar={ok:0,x:0};tela('jogo');await proxima();
+}
+async function proxima(){
+  parar();
+  const p=await sortear(cfg.modo==='fase'?'aleatorio':cfg.tema);
+  usadas.add(p.palavra);
+  jogo={...p,tentadas:new Set(),erros:0,fim:null,rest:TEMPO};
+  if(cfg.dif==='dificil')timer=setInterval(()=>{
+    jogo.rest--;
+    if(jogo.rest<=0){jogo.rest=0;finalizar('tempo');}
     desenhar();
-  } catch {
-    el.resultado.className = 'resultado erro';
-    el.resultado.textContent = 'Não foi possível sortear uma palavra. Tente novamente.';
-  }
+  },1000);
+  desenhar();
 }
-
-function tentar(letra) {
-  if (!jogo || jogo.fim || jogo.tentadas.has(letra)) return;
-  jogo.tentadas.add(letra);
-  const acertou = [...jogo.palavra].some((c) => normalizar(c) === letra);
-  if (!acertou) jogo.erros++;
-
-  const completa = [...jogo.palavra].every((c) => !/\p{L}/u.test(c) || jogo.tentadas.has(normalizar(c)));
-  if (completa) jogo.fim = 'vitoria';
-  else if (jogo.erros >= MAX_ERROS) jogo.fim = 'derrota';
+function finalizar(r){
+  jogo.fim=r;parar();
+  r==='vitoria'?placar.ok++:placar.x++;
+}
+function tentar(l){
+  if(!jogo||jogo.fim||jogo.tentadas.has(l))return;
+  jogo.tentadas.add(l);
+  if(![...jogo.palavra].some(c=>norm(c)===l))jogo.erros++;
+  const completa=[...jogo.palavra].every(c=>!eLetra(c)||jogo.tentadas.has(norm(c)));
+  if(completa)finalizar('vitoria');else if(jogo.erros>=MAX_ERROS)finalizar('derrota');
   desenhar();
 }
 
-function desenhar() {
-  // Tema e tentativas
-  el.dica.textContent = 'Tema: ' + rotulo(jogo.tema);
-  el.status.textContent = `Erros: ${jogo.erros} de ${MAX_ERROS}`;
+function desenhar(){
+  const fase=cfg.modo==='fase', mostraTema=cfg.dif==='facil', temTimer=cfg.dif==='dificil';
+  $('cModo').innerHTML=(fase?'Fase':'Infinito')+' · <b>'+{facil:'Fácil',medio:'Médio',dificil:'Difícil'}[cfg.dif]+'</b>';
+  $('cTema').innerHTML=mostraTema?'Tema: <b>'+rot(jogo.tema)+'</b>':'Tema: <b>?</b>';
+  $('cPlacar').innerHTML=fase?'Palavra <b>'+Math.min(placar.ok+1,TOTAL)+'/'+TOTAL+'</b>':'Acertos <b>'+placar.ok+'</b> · Erros <b>'+placar.x+'</b>';
+  $('tt').textContent=mostraTema?'Tema: '+rot(jogo.tema):'Tema oculto';
+  $('erros').textContent='Erros: '+jogo.erros+' de '+MAX_ERROS;
+  $('tempo').classList.toggle('hidden',!temTimer);$('relogio').classList.toggle('hidden',!temTimer);
+  if(temTimer){
+    const u=jogo.rest<=10&&!jogo.fim;
+    $('barra').style.width=(jogo.rest/TEMPO*100)+'%';
+    $('tempo').classList.toggle('urgente',u);$('relogio').classList.toggle('urgente',u);
+    $('relogio').textContent='0:'+String(jogo.rest).padStart(2,'0');
+  }
+  document.querySelectorAll('.parte').forEach((p,i)=>p.classList.toggle('v',i<jogo.erros));
 
-  // Boneco
-  el.partes.forEach((p, i) => p.classList.toggle('visivel', i < jogo.erros));
-
-  // Palavra secreta
-  el.palavra.innerHTML = '';
-  [...jogo.palavra].forEach((c) => {
-    const s = document.createElement('span');
-    s.className = 'letra';
-    if (!/\p{L}/u.test(c)) {
-      // hífen ou espaço aparecem desde o início
-      s.textContent = c === ' ' ? '' : c;
-      if (c === ' ') s.classList.add('espaco');
-    } else if (jogo.tentadas.has(normalizar(c)) || jogo.fim === 'derrota') {
-      s.textContent = c;
-      if (!jogo.tentadas.has(normalizar(c))) s.classList.add('revelada');
-    }
-    el.palavra.appendChild(s);
+  $('palavra').innerHTML='';
+  [...jogo.palavra].forEach(c=>{
+    const s=document.createElement('span');s.className='l';
+    if(!eLetra(c)){if(c===' ')s.classList.add('e');else s.textContent=c;}
+    else if(jogo.tentadas.has(norm(c)))s.textContent=c;
+    else if(jogo.fim&&jogo.fim!=='vitoria'){s.textContent=c;s.classList.add('rev');}
+    $('palavra').appendChild(s);
   });
 
-  // Teclado
-  el.teclado.innerHTML = '';
-  ALFABETO.forEach((l) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = l;
-    if (jogo.tentadas.has(l)) {
-      const certa = [...jogo.palavra].some((c) => normalizar(c) === l);
-      b.classList.add(certa ? 'certa' : 'errada');
-    }
-    b.disabled = jogo.tentadas.has(l) || !!jogo.fim;
-    b.addEventListener('click', () => tentar(l));
-    el.teclado.appendChild(b);
+  $('teclado').innerHTML='';
+  ALFA.forEach(l=>{
+    const b=document.createElement('button'),t=jogo.tentadas.has(l);
+    b.textContent=l;b.disabled=t||!!jogo.fim;
+    if(t)b.className=[...jogo.palavra].some(c=>norm(c)===l)?'c':'x';
+    b.onclick=()=>tentar(l);$('teclado').appendChild(b);
   });
 
-  // Resultado
-  el.resultado.className = 'resultado' + (jogo.fim ? ' ' + jogo.fim : '');
-  el.resultado.textContent =
-    jogo.fim === 'vitoria' ? 'Você acertou!' :
-    jogo.fim === 'derrota' ? `Fim de jogo. A palavra era "${jogo.palavra}".` : '';
+  let msg='',cls='',acao=null;
+  if(jogo.fim){
+    const fimFase=fase&&(jogo.fim!=='vitoria'||placar.ok>=TOTAL);
+    if(jogo.fim==='vitoria'&&!fimFase){msg='Você acertou!';cls='ok';acao=['Próxima palavra',proxima];}
+    else if(!fase&&jogo.fim==='tempo'){msg='O tempo acabou! Fim de jogo: '+placar.ok+' acertos. Era "'+jogo.palavra+'".';cls='ruim';acao=['Jogar de novo',iniciar];}
+    else if(!fase){msg='Não foi dessa vez. A palavra era "'+jogo.palavra+'".';cls='ruim';acao=['Próxima palavra',proxima];}
+    else if(jogo.fim==='vitoria'){msg='Fase concluída! '+TOTAL+' de '+TOTAL+' palavras.';cls='ok';acao=['Jogar de novo',iniciar];}
+    else{msg=(jogo.fim==='tempo'?'O tempo acabou!':'Boneco completo!')+' Game over: '+placar.ok+' de '+TOTAL+'. Era "'+jogo.palavra+'".';cls='ruim';acao=['Tentar de novo',iniciar];}
+  }
+  $('res').textContent=msg;$('res').className=cls;
+  $('acao').classList.toggle('hidden',!acao);
+  if(acao){$('acao').textContent=acao[0];$('acao').onclick=acao[1];}
 }
 
-// Teclado físico
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey || e.metaKey || e.altKey) return;
-  const l = e.key.toLowerCase();
-  if (ALFABETO.includes(l)) tentar(l);
+let difInf='facil';
+$('dif').querySelectorAll('button').forEach(b=>b.onclick=()=>{difInf=b.dataset.d;$('dif').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{cfg.modo='fase';cfg.dif=b.dataset.f;iniciar();});
+$('jogarInf').onclick=()=>{cfg.modo='infinito';cfg.dif=difInf;iniciar();};
+$('voltar').onclick=()=>{parar();jogo=null;tela('menu');};
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  const l=e.key.toLowerCase();if(ALFA.includes(l))tentar(l);
 });
-
-el.novo.addEventListener('click', novoJogo);
-
-carregarTemas().then(novoJogo);
+carregarTemas();
 </script>
 </body>
 </html>
