@@ -27,6 +27,9 @@ button:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
 .principal:hover:not(:disabled){background:#ffd07a}
 .hidden{display:none!important}
 p b{color:var(--giz);font-weight:400}
+input{font:inherit;width:100%;margin-bottom:10px;padding:8px 12px;border-radius:10px;border:2px solid var(--linha);background:rgba(0,0,0,.2);color:var(--giz)}
+input:focus-visible{outline:3px solid var(--ouro)}
+p.erro{color:var(--erro);min-height:1.3em;margin:0 0 6px}
 .topo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
 .topo .sp{flex:1}
 .chip{border:1.5px solid var(--linha);border-radius:99px;padding:2px 12px;font-size:1rem;color:var(--suave)}
@@ -63,22 +66,32 @@ svg{width:200px;flex:none}
   <div class="card">
     <h2>Fases · 10 palavras</h2>
     <p>Acerte 10 palavras aleatórias. Se o boneco ficar completo, é game over.</p>
-    <div class="grupo">
-      <button class="principal" data-f="facil">Fácil</button>
-      <button class="principal" data-f="medio">Médio</button>
-      <button class="principal" data-f="dificil">Difícil</button>
-    </div>
-  </div>
-  <div class="card">
-    <h2>Modo infinito</h2>
-    <p>Sem limite de palavras: jogue o quanto quiser e escolha o tema.</p>
-    <div class="grupo" id="dif" role="group" aria-label="Dificuldade">
+    <div class="grupo" id="dif-fase" role="group" aria-label="Dificuldade">
       <button data-d="facil" aria-pressed="true">Fácil</button>
       <button data-d="medio" aria-pressed="false">Médio</button>
       <button data-d="dificil" aria-pressed="false">Difícil</button>
     </div>
-    <div class="grupo" id="temas" role="group" aria-label="Tema"></div>
-    <button class="principal" id="jogarInf">Jogar</button>
+    <div class="grupo" id="temas-fase" role="group" aria-label="Tema"></div>
+    <button class="principal" id="jogar-fase">Começar fase</button>
+  </div>
+  <div class="card">
+    <h2>Modo infinito</h2>
+    <p>Sem limite de palavras: jogue o quanto quiser e escolha o tema.</p>
+    <div class="grupo" id="dif-infinito" role="group" aria-label="Dificuldade">
+      <button data-d="facil" aria-pressed="true">Fácil</button>
+      <button data-d="medio" aria-pressed="false">Médio</button>
+      <button data-d="dificil" aria-pressed="false">Difícil</button>
+    </div>
+    <div class="grupo" id="temas-infinito" role="group" aria-label="Tema"></div>
+    <button class="principal" id="jogar-infinito">Jogar</button>
+  </div>
+  <div class="card">
+    <h2>Modo personalizado</h2>
+    <p>Escolha a palavra e jogue neste aparelho ou envie o link para os amigos.</p>
+    <input id="cPal" type="password" placeholder="Palavra secreta" maxlength="30" autocomplete="off">
+    <input id="cDica" type="text" placeholder="Tema ou dica (opcional)" maxlength="30" autocomplete="off">
+    <p id="cMsg" class="erro" aria-live="polite"></p>
+    <div class="grupo"><button class="principal" id="cJogar">Jogar neste aparelho</button><button id="cLink">Copiar link</button></div>
   </div>
 </section>
 
@@ -124,17 +137,20 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const RESERVA={animal:['ELEFANTE','GIRAFA','TUCANO','GOLFINHO','CAPIVARA'],fruta:['BANANA','MORANGO','GOIABA','MARACUJA','ABACAXI'],
  profissao:['MEDICO','BOMBEIRO','PROGRAMADOR','FOTOGRAFO','ARQUITETO'],objeto:['CADEIRA','RELOGIO','TESOURA','MOCHILA','VENTILADOR']};
 
+const sel={infinito:{dif:'facil',tema:'aleatorio'},fase:{dif:'facil',tema:'aleatorio'}}; // escolhas do menu
 let cfg={modo:'infinito',dif:'facil',tema:'aleatorio'}, jogo=null, usadas=new Set(), placar={ok:0,x:0}, timer=null;
 
 async function carregarTemas(){
   let lista;
   try{const r=await fetch('/api/temas');if(!r.ok)throw 0;lista=await r.json();}catch{lista=Object.keys(RESERVA);}
-  $('temas').innerHTML='';
-  ['aleatorio',...lista].forEach(t=>{
-    const b=document.createElement('button');
-    b.textContent=rot(t);b.setAttribute('aria-pressed',t===cfg.tema);
-    b.onclick=()=>{cfg.tema=t;[...$('temas').children].forEach(x=>x.setAttribute('aria-pressed',x===b));};
-    $('temas').appendChild(b);
+  ['infinito','fase'].forEach(m=>{
+    const box=$('temas-'+m);box.innerHTML='';
+    ['aleatorio',...lista].forEach(t=>{
+      const b=document.createElement('button');
+      b.textContent=rot(t);b.setAttribute('aria-pressed',t===sel[m].tema);
+      b.onclick=()=>{sel[m].tema=t;[...box.children].forEach(x=>x.setAttribute('aria-pressed',x===b));};
+      box.appendChild(b);
+    });
   });
 }
 
@@ -156,7 +172,7 @@ async function iniciar(){
 }
 async function proxima(){
   parar();
-  const p=await sortear(cfg.modo==='fase'||cfg.dif!=='facil'?'aleatorio':cfg.tema);
+  const p=await sortear(cfg.dif!=='facil'?'aleatorio':cfg.tema);
   usadas.add(p.palavra);
   jogo={...p,tentadas:new Set(),erros:0,fim:null,rest:TEMPO};
   if(cfg.dif==='dificil')timer=setInterval(()=>{
@@ -181,9 +197,9 @@ function tentar(l){
 
 function desenhar(){
   const fase=cfg.modo==='fase', mostraTema=cfg.dif==='facil', temTimer=cfg.dif==='dificil';
-  $('cModo').innerHTML=(fase?'Fase':'Infinito')+' · <b>'+{facil:'Fácil',medio:'Médio',dificil:'Difícil'}[cfg.dif]+'</b>';
+  $('cModo').innerHTML=cfg.modo==='custom'?'<b>Personalizado</b>':(fase?'Fase':'Infinito')+' · <b>'+{facil:'Fácil',medio:'Médio',dificil:'Difícil'}[cfg.dif]+'</b>';
   $('cTema').innerHTML=mostraTema?'Tema: <b>'+rot(jogo.tema)+'</b>':'Tema: <b>?</b>';
-  $('cPlacar').innerHTML=fase?'Palavra <b>'+Math.min(placar.ok+1,TOTAL)+'/'+TOTAL+'</b>':'Acertos <b>'+placar.ok+'</b> · Erros <b>'+placar.x+'</b>';
+  $('cPlacar').innerHTML=cfg.modo==='custom'?'':fase?'Palavra <b>'+Math.min(placar.ok+1,TOTAL)+'/'+TOTAL+'</b>':'Acertos <b>'+placar.ok+'</b> · Erros <b>'+placar.x+'</b>';
   $('tt').textContent=mostraTema?'Tema: '+rot(jogo.tema):'Tema oculto';
   $('erros').textContent='Erros: '+jogo.erros+' de '+MAX_ERROS;
   $('tempo').classList.toggle('hidden',!temTimer);$('relogio').classList.toggle('hidden',!temTimer);
@@ -213,7 +229,10 @@ function desenhar(){
   });
 
   let msg='',cls='',acao=null;
-  if(jogo.fim){
+  if(jogo.fim&&cfg.modo==='custom'){
+    const v=jogo.fim==='vitoria';
+    msg=v?'Você acertou!':'Não foi dessa vez. A palavra era "'+jogo.palavra+'".';cls=v?'ok':'ruim';acao=['Voltar ao menu',sair];
+  }else if(jogo.fim){
     const fimFase=fase&&(jogo.fim!=='vitoria'||placar.ok>=TOTAL);
     if(jogo.fim==='vitoria'&&!fimFase){msg='Você acertou!';cls='ok';acao=['Próxima palavra',proxima];}
     else if(!fase&&jogo.fim==='tempo'){msg='O tempo acabou! Fim de jogo: '+placar.ok+' acertos. Era "'+jogo.palavra+'".';cls='ruim';acao=['Jogar de novo',iniciar];}
@@ -226,15 +245,50 @@ function desenhar(){
   if(acao){$('acao').textContent=acao[0];$('acao').onclick=acao[1];}
 }
 
-let difInf='facil';
-$('dif').querySelectorAll('button').forEach(b=>b.onclick=()=>{difInf=b.dataset.d;$('temas').classList.toggle('hidden',difInf!=='facil');$('dif').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
-document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{cfg.modo='fase';cfg.dif=b.dataset.f;iniciar();});
-$('jogarInf').onclick=()=>{cfg.modo='infinito';cfg.dif=difInf;iniciar();};
-$('voltar').onclick=()=>{parar();jogo=null;tela('menu');};
+['infinito','fase'].forEach(m=>{
+  $('dif-'+m).querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    sel[m].dif=b.dataset.d;
+    $('temas-'+m).classList.toggle('hidden',sel[m].dif!=='facil'); // tema só escolhível no fácil
+    $('dif-'+m).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  });
+  $('jogar-'+m).onclick=()=>{cfg={modo:m,...sel[m]};iniciar();};
+});
+$('voltar').onclick=sair;
 document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey)return;
   const l=e.key.toLowerCase();if(ALFA.includes(l))tentar(l);
 });
+// ---- Modo personalizado ----
+const limpa=d=>String(d||'').replace(/[<>&"'`]/g,'').trim().slice(0,30);
+const validaPal=p=>typeof p==='string'&&p.length<=30&&/^[\p{L} -]+$/u.test(p)&&/\p{L}/u.test(p);
+const codif=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const decodif=h=>JSON.parse(decodeURIComponent(escape(atob(h.replace(/-/g,'+').replace(/_/g,'/')))));
+function aviso(t,erro){$('cMsg').textContent=t;$('cMsg').className=erro?'erro':'';}
+function lerCustom(){
+  const p=$('cPal').value.trim().replace(/\s+/g,' ').toUpperCase();
+  if(!validaPal(p)){aviso('Digite uma palavra usando só letras, espaços e hífen.',true);return null;}
+  aviso('');return {p,d:limpa($('cDica').value)};
+}
+function iniciarCustom(p,d){
+  parar();placar={ok:0,x:0};cfg={modo:'custom',dif:d?'facil':'medio'};
+  jogo={tema:d,palavra:p,tentadas:new Set(),erros:0,fim:null,rest:TEMPO};
+  tela('jogo');desenhar();
+}
+function sair(){
+  parar();jogo=null;
+  try{history.replaceState(null,'',location.pathname+location.search);}catch{}
+  tela('menu');
+}
+$('cJogar').onclick=()=>{const c=lerCustom();if(!c)return;$('cPal').value='';iniciarCustom(c.p,c.d);};
+$('cLink').onclick=()=>{
+  const c=lerCustom();if(!c)return;
+  const url=location.origin+location.pathname+'#d='+codif(c);
+  navigator.clipboard.writeText(url).then(()=>aviso('Link copiado! Cole no WhatsApp ou onde quiser.',false))
+    .catch(()=>window.prompt('Copie o link:',url));
+};
+if(location.hash.startsWith('#d=')){ // abriu por um link compartilhado
+  try{const o=decodif(location.hash.slice(3));if(validaPal(o.p))iniciarCustom(o.p,limpa(o.d));}catch{}
+}
 carregarTemas();
 </script>
 </body>
