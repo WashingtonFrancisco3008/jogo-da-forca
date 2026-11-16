@@ -156,7 +156,7 @@ async function iniciar(){
 }
 async function proxima(){
   parar();
-  const p=await sortear(cfg.modo==='fase'?'aleatorio':cfg.tema);
+  const p=await sortear(cfg.modo==='fase'||cfg.dif!=='facil'?'aleatorio':cfg.tema);
   usadas.add(p.palavra);
   jogo={...p,tentadas:new Set(),erros:0,fim:null,rest:TEMPO};
   if(cfg.dif==='dificil')timer=setInterval(()=>{
@@ -227,7 +227,7 @@ function desenhar(){
 }
 
 let difInf='facil';
-$('dif').querySelectorAll('button').forEach(b=>b.onclick=()=>{difInf=b.dataset.d;$('dif').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
+$('dif').querySelectorAll('button').forEach(b=>b.onclick=()=>{difInf=b.dataset.d;$('temas').classList.toggle('hidden',difInf!=='facil');$('dif').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
 document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{cfg.modo='fase';cfg.dif=b.dataset.f;iniciar();});
 $('jogarInf').onclick=()=>{cfg.modo='infinito';cfg.dif=difInf;iniciar();};
 $('voltar').onclick=()=>{parar();jogo=null;tela('menu');};
